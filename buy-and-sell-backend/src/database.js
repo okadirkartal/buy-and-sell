@@ -1,14 +1,17 @@
 import mysql from 'mysql';
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'hapi-server',
-    password: 'abc123!!',
-    database: 'buy-and-sell',
-});
+let connection;
 
 export const db = {
-    connect: () => connection.connect(),
+    connect: () =>{
+    connection = mysql.createConnection({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+    });
+    connection.connect();
+    },
     query: (queryString, escapedValues) =>
         new Promise((resolve, reject) => {
             connection.query(queryString, escapedValues, (error, results, fields) => {
@@ -17,4 +20,5 @@ export const db = {
             })
         }),
     end: () => connection.end(),
+
 }
